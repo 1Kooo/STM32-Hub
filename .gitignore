@@ -20,3 +20,6 @@ Objects/
 # ===== Windows 系统文件 =====
 Thumbs.db
 Desktop.ini
+
+# ===== 本地学习工程（不上传） =====
+stm32project/
