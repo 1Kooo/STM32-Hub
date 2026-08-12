@@ -1,0 +1,22 @@
+# ===== Keil MDK 编译产物 =====
+Debug/
+Listings/
+Objects/
+*.o
+*.d
+*.crf
+*.htm
+*.lnp
+*.sct
+*.map
+*.axf
+
+# ===== Keil 个人配置（每个人不同，忽略） =====
+*.uvguix
+*.uvopt
+*.bak
+*.dep
+
+# ===== Windows 系统文件 =====
+Thumbs.db
+Desktop.ini
