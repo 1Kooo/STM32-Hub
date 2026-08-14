@@ -19,12 +19,16 @@ STM32 常用外设驱动与函数封装集合，**标准外设库（SPL）+ HAL 
 STM32-Hub/
 ├── StdPeriph/      # 标准外设库版（Keil MDK + SPL）
 │   ├── led/        #   LED 驱动
-│   └── key/        #   按键驱动
+│   ├── key/        #   按键驱动
+│   └── usart/      #   串口驱动（宏配置可移植，115200）
 ├── HAL/            # HAL 库版（CubeMX + HAL）
 │   ├── led/
-│   └── key/
+│   ├── key/
+│   └── usart/
 └── Register/       # 寄存器版（学习用，逐行注释原理）
-    └── led/
+    ├── led/
+    ├── key/
+    └── usart/
 ```
 
 ## 收录清单
@@ -33,6 +37,7 @@ STM32-Hub/
 |---|---|---|---|---|
 | LED | 多路 LED 点亮/熄灭/翻转，极性可配 | ✅ | 🚧 待开发 | ✅ |
 | 按键 | 上拉输入 + 消抖 + 边沿检测 | ✅ | 🚧 待开发 | ✅ |
+| 串口 USART | 收发 + printf 重定向，宏配置可移植（U1/U2/U3） | ✅ | 🚧 待开发 | ✅ |
 
 ## 三版关系说明
 
@@ -51,6 +56,8 @@ main.c（业务代码，调用 Led_On(LED1) 等，三版通用）
 | 配模式 | `GPIO_Init()` | `CRL/CRH` 先清后写 |
 | 输出电平 | `GPIO_WriteBit()` | `BSRR` |
 | 翻转 | `GPIO_ReadOutputDataBit()` | `ODR ^=` |
+| 串口配置 | `USART_Init()`（波特率自动算） | 五步：双时钟→引脚→BRR→格式→使能 |
+| 串口收发 | `USART_SendData()` / `USART_ReceiveData()` | 等 TXE/RXNE → 写/读 DR |
 
 ## 使用方法
 
