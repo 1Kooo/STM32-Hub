@@ -19,13 +19,12 @@
 #include "stm32f10x_gpio.h"
 
 /* 引脚置高/置低/读电平（库函数封装）
- * ★坑：GPIO_SetBits 第二参数是"位掩码"（如 GPIO_Pin_6=0x0040），不是引脚号！
- *   所以必须 (1u << 引脚号) 转换，直接传裸数字 6 = 置位的是 PB1|PB2 */
-#define I2C_SCL_H()  GPIO_SetBits(I2C_SCL_PORT, (uint16_t)(1u << I2C_SCL_PIN))
-#define I2C_SCL_L()  GPIO_ResetBits(I2C_SCL_PORT, (uint16_t)(1u << I2C_SCL_PIN))
-#define I2C_SDA_H()  GPIO_SetBits(I2C_SDA_PORT, (uint16_t)(1u << I2C_SDA_PIN))
-#define I2C_SDA_L()  GPIO_ResetBits(I2C_SDA_PORT, (uint16_t)(1u << I2C_SDA_PIN))
-#define I2C_SDA_IN() GPIO_ReadInputDataBit(I2C_SDA_PORT, (uint16_t)(1u << I2C_SDA_PIN))
+ * I2C_SCL_PIN 已是库掩码（GPIO_Pin_6 = 0x0040），直接传即可 */
+#define I2C_SCL_H()  GPIO_SetBits(I2C_SCL_PORT, I2C_SCL_PIN)
+#define I2C_SCL_L()  GPIO_ResetBits(I2C_SCL_PORT, I2C_SCL_PIN)
+#define I2C_SDA_H()  GPIO_SetBits(I2C_SDA_PORT, I2C_SDA_PIN)
+#define I2C_SDA_L()  GPIO_ResetBits(I2C_SDA_PORT, I2C_SDA_PIN)
+#define I2C_SDA_IN() GPIO_ReadInputDataBit(I2C_SDA_PORT, I2C_SDA_PIN)
 
 /* 半周期延时（空循环，配合模块上拉，约 100kHz） */
 static void I2c_Delay(void)
@@ -42,14 +41,14 @@ void I2c_Init(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
     /* 2. PB6/PB7 配开漏输出（★开漏是 I2C 的关键）
-     * ★坑：GPIO_Init 的 GPIO_Pin 也是位掩码！裸引脚号 6|7=7 会配到 PB0/1/2 */
-    GPIO_InitStructure.GPIO_Pin   = (uint16_t)((1u << I2C_SCL_PIN) | (1u << I2C_SDA_PIN));
+     * GPIO_Pin 是库掩码，I2C_SCL_PIN | I2C_SDA_PIN = GPIO_Pin_6|GPIO_Pin_7 */
+    GPIO_InitStructure.GPIO_Pin   = (uint16_t)(I2C_SCL_PIN | I2C_SDA_PIN);
     GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;   /* 开漏输出 */
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    /* 3. 总线空闲：两根线都释放（高电平）——★位掩码 (1u<<pin)，不是裸引脚号 */
-    GPIO_SetBits(I2C_SCL_PORT, (uint16_t)((1u << I2C_SCL_PIN) | (1u << I2C_SDA_PIN)));
+    /* 3. 总线空闲：两根线都释放（高电平） */
+    GPIO_SetBits(I2C_SCL_PORT, (uint16_t)(I2C_SCL_PIN | I2C_SDA_PIN));
 }
 
 void I2c_Start(void)

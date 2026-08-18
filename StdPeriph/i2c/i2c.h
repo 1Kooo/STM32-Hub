@@ -22,11 +22,12 @@
  * I2C 引脚配置（软件模拟，任意普通引脚都行）
  * 建议避开：PA13/14/15、PB3/PB4（JTAG 调试脚）
  * 本配置：SCL=PB6、SDA=PB7（避开 LED/USART/舵机占用）
+ * ★库用位掩码（GPIO_Pin_6 = 0x0040 = 1<<6），不是引脚号！
  *==========================================================*/
 #define I2C_SCL_PORT     GPIOB
-#define I2C_SCL_PIN      6            /* PB6 = SCL（时钟线） */
+#define I2C_SCL_PIN      GPIO_Pin_6      /* PB6 = SCL（时钟线） */
 #define I2C_SDA_PORT     GPIOB
-#define I2C_SDA_PIN      7            /* PB7 = SDA（数据线） */
+#define I2C_SDA_PIN      GPIO_Pin_7      /* PB7 = SDA（数据线） */
 
 void I2c_Init(void);                          /* 引脚配开漏输出，总线置空闲 */
 void I2c_Start(void);                         /* 起始信号 */
