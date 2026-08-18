@@ -23,21 +23,30 @@ STM32-Hub/
 │   ├── usart/      #   串口驱动（宏配置可移植，115200）
 │   ├── tim/        #   定时器驱动（1ms 定时中断 tick）
 │   ├── pwm/        #   PWM 输出驱动（呼吸灯/舵机）
-│   └── servo/      #   舵机驱动（应用层，复用 PWM）
+│   ├── servo/      #   舵机驱动（应用层，复用 PWM）
+│   ├── i2c/        #   I2C 总线（软件模拟，任意引脚）
+│   ├── i2c_hw/     #   I2C 总线（硬件外设 I2C1，PB6/PB7）
+│   └── oled/       #   OLED 显示（应用层，复用 I2C）
 ├── HAL/            # HAL 库版（CubeMX + HAL）
 │   ├── led/
 │   ├── key/
 │   ├── usart/
 │   ├── tim/
 │   ├── pwm/
-│   └── servo/
+│   ├── servo/
+│   ├── i2c/
+│   ├── i2c_hw/
+│   └── oled/
 └── Register/       # 寄存器版（学习用，逐行注释原理）
     ├── led/
     ├── key/
     ├── usart/
     ├── tim/
     ├── pwm/
-    └── servo/
+    ├── servo/
+    ├── i2c/
+    ├── i2c_hw/
+    └── oled/
 ```
 
 ## 收录清单
@@ -50,6 +59,9 @@ STM32-Hub/
 | 定时器 TIM | 1ms 定时中断 tick，时间片轮询基石（宏配置可移植） | ✅ | 🚧 待开发 | ✅ |
 | PWM | 占空比输出（呼吸灯/舵机/电机），宏配置可移植 | ✅ | 🚧 待开发 | ✅ |
 | 舵机 Servo | 角度控制（应用层驱动，复用 PWM，两版同代码） | ✅ | 🚧 待开发 | ✅ |
+| I2C | 软件模拟总线（开漏 + 时序，任意引脚） | ✅ | 🚧 待开发 | ✅ |
+| I2C（硬件外设） | 硬件 I2C1 版（状态机 + 标志轮询，PB6/PB7） | ✅ | 🚧 待开发 | ✅ |
+| OLED | SSD1306 128×64 显示（应用层复用 I2C，两版同代码） | ✅ | 🚧 待开发 | ✅ |
 
 ## 三版关系说明
 
@@ -70,6 +82,9 @@ main.c（业务代码，调用 Led_On(LED1) 等，三版通用）
 | 翻转 | `GPIO_ReadOutputDataBit()` | `ODR ^=` |
 | 串口配置 | `USART_Init()`（波特率自动算） | 五步：双时钟→引脚→BRR→格式→使能 |
 | 串口收发 | `USART_SendData()` / `USART_ReceiveData()` | 等 TXE/RXNE → 写/读 DR |
+| 软件 I2C 位操作 | `GPIO_SetBits/ResetBits` + `GPIO_ReadInputDataBit` | BSRR 置/清位 + IDR 读电平 |
+| 硬件 I2C 起始/停止 | `I2C_GenerateSTART/STOP()` | CR1 START/STOP 位 |
+| 硬件 I2C 发字节 | `I2C_SendData()` | DR 寄存器（等 TXE/BTF 标志） |
 
 ## 使用方法
 
