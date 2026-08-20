@@ -26,7 +26,8 @@ STM32-Hub/
 │   ├── servo/      #   舵机驱动（应用层，复用 PWM）
 │   ├── i2c/        #   I2C 总线（软件模拟，任意引脚）
 │   ├── i2c_hw/     #   I2C 总线（硬件外设 I2C1，PB6/PB7）
-│   └── oled/       #   OLED 显示（应用层，复用 I2C）
+│   ├── oled/       #   OLED 显示（应用层，复用 I2C）
+│   └── spi/        #   SPI 总线（硬件外设，全双工，宏参数化）
 ├── HAL/            # HAL 库版（CubeMX + HAL）
 │   ├── led/
 │   ├── key/
@@ -36,7 +37,8 @@ STM32-Hub/
 │   ├── servo/
 │   ├── i2c/
 │   ├── i2c_hw/
-│   └── oled/
+│   ├── oled/
+│   └── spi/
 └── Register/       # 寄存器版（学习用，逐行注释原理）
     ├── led/
     ├── key/
@@ -46,7 +48,8 @@ STM32-Hub/
     ├── servo/
     ├── i2c/
     ├── i2c_hw/
-    └── oled/
+    ├── oled/
+    └── spi/
 ```
 
 ## 收录清单
@@ -62,6 +65,7 @@ STM32-Hub/
 | I2C | 软件模拟总线（开漏 + 时序，任意引脚） | ✅ | 🚧 待开发 | ✅ |
 | I2C（硬件外设） | 硬件 I2C1 版（状态机 + 标志轮询，PB6/PB7） | ✅ | 🚧 待开发 | ✅ |
 | OLED | SSD1306 128×64 显示（应用层复用 I2C，两版同代码） | ✅ | 🚧 待开发 | ✅ |
+| SPI | 全双工主机（SPI1 外设，宏参数化可换 SPI2） | ✅ | 🚧 待开发 | ✅ |
 
 ## 三版关系说明
 
@@ -85,6 +89,7 @@ main.c（业务代码，调用 Led_On(LED1) 等，三版通用）
 | 软件 I2C 位操作 | `GPIO_SetBits/ResetBits` + `GPIO_ReadInputDataBit` | BSRR 置/清位 + IDR 读电平 |
 | 硬件 I2C 起始/停止 | `I2C_GenerateSTART/STOP()` | CR1 START/STOP 位 |
 | 硬件 I2C 发字节 | `I2C_SendData()` | DR 寄存器（等 TXE/BTF 标志） |
+| SPI 收发 | `SPI_I2S_SendData/ReceiveData()` | DR 寄存器（等 TXE 写、等 RXNE 读） |
 
 ## 使用方法
 
